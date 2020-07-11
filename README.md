@@ -14,3 +14,37 @@ water) can be used for multiple beverages.
 some methods to refill them.
 * Please provide functional integration test cases for maximum coverage.
 - - - -
+
+## 2. Solution Approach
+* CoffeeMachine: Singleton Class to ensure only one object of CoffeeMachine in the system. Takes <OutletId> <DrinkId> as input to
+ make a drink.
+* CoffeeMachineOutlet: Outlets attached to a coffee machine
+* Ingredient : an enum to represent all ingredients  having name and threshold. Threshold is used to give warning if
+ stock for particular ingredient falls below threshold value.
+* IngredientInventory : a ConcurrentHashMap to store the quantity of all Ingredients present in coffee machine
+* DrinkOption : Enum to to represent all drink options available in the coffee machine
+* DrinkRecipes : Map to store quantity of all required Ingredients to make a drink
+* RecipeRepository : a HashMap of all DrinkOptions and their corresponding DrinkRecipes
+
+* CoffeeMakerJob - Runnable job to brew drink corresponding to given <DrinkId> on given  <OutletId>. Its makeDrink()
+ function deducts quantity of all Ingredients of ordered drink from IngredientInventory of coffee machine
+* CoffeeDrinkerJob - Runnable job to to consume prepared drink on given <OutletId>
+
+* InsufficientIngredientException : RuntimeException raised when existing quantity of any ingredient of ordered drink is less than required quantity
+ 
+- - - -
+
+## 3. Install and Run 
+#### 4.1 Install and build
+
+`mvn -U clean install`
+
+#### 4.1 Running the application:
+
+`mvn exec:java`
+
+## 5. Test Cases
+
+#### 5.1 To run all test cases
+
+`mvn test`
