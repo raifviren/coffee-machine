@@ -88,17 +88,20 @@ public class CoffeeMakerJob implements Runnable {
                 LOGGER.debug("making drink: {} outletId:{} orderId:{}", choice.name(), this.outlet.getId(),
                              CoffeeMachine.getOrderId());
                 beverage = this.makeDrink(choice);
-                this.outlet.setOutletState(OutletState.DRINK_READY);
+                this.outlet.setOutletState(OutletState.BREWING_COMPLETED);
 
                 this.outlet.setCurrentBeverage(beverage);
                 System.out.println(choice.getDisplayName() + " is prepared");
                 LOGGER.debug("drink ready: {} outletId:{} orderId:{} notifying all", choice.name(),
                              this.outlet.getId(), CoffeeMachine.getOrderId());
-                CoffeeMachine.locks[this.outlet.getId() - 1].notifyAll();
+//                CoffeeMachine.locks[this.outlet.getId() - 1].notifyAll();
             }
             catch (InsufficientIngredientException e) {
                 Ingredient ingredient = e.getIngredient();
                 System.out.println(choice.getDisplayName() + " cannot be prepared because " + ingredient.getDisplayName() + " is " + "not sufficient");
+            }finally {
+                this.outlet.setOutletState(OutletState.BREWING_COMPLETED);
+                CoffeeMachine.locks[this.outlet.getId() - 1].notifyAll();
             }
         }
     }

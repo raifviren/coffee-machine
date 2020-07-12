@@ -176,4 +176,17 @@ public final class CoffeeMachine {
             }
         }
     }
+
+    public void reset() throws IOException {
+        File file = new File(CoffeeMachine.class.getClassLoader().getResource("data.json").getFile());
+        String json = FileUtils.readFileToString(file, "UTF-8");
+        orderNo.set(0);
+        MachineDto coffeeMachine = JsonUtils.deserialize(json, MachineDto.class);
+        CoffeeMachineDto machine = coffeeMachine.getMachine();
+        //refilling up inventory
+        for (Map.Entry<String, Integer> ingredientMap : machine.getTotal_items_quantity().entrySet()) {
+            LOGGER.debug("Ingredient: {}  Quantity: {} ", ingredientMap.getKey(), ingredientMap.getValue());
+            this.ingredientInventory.put(Ingredient.fromString(ingredientMap.getKey()), ingredientMap.getValue());
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package coffeeMachine.drinker;
 
+import coffeeMachine.beverage.Beverage;
 import coffeeMachine.machine.CoffeeMachine;
 import coffeeMachine.machine.CoffeeMachineOutlet;
 import coffeeMachine.machine.OutletState;
@@ -32,7 +33,7 @@ public class CoffeeDrinkerJob implements Runnable {
 
     void drinkCoffee() {
         synchronized (CoffeeMachine.locks[this.outlet.getId() - 1]) {
-            if (this.outlet.getOutletState() != OutletState.DRINK_READY) {
+            if (this.outlet.getOutletState() != OutletState.BREWING_COMPLETED) {
 //                System.out.println(" Waiting for coffee machine to prepare coffee on outlet: "+this.outlet.getId());
                 try {
                     CoffeeMachine.locks[this.outlet.getId() - 1].wait();
@@ -42,13 +43,17 @@ public class CoffeeDrinkerJob implements Runnable {
                 }
             }
             if (Objects.nonNull(outlet.getCurrentBeverage())) {
-                outlet.getCurrentBeverage().drink();
+                Beverage currentBeverage = outlet.getCurrentBeverage();
+                currentBeverage.drink();
                 CoffeeMachine.incrementOrderId();
-                System.out.println("Order Completed. OrderId: " + CoffeeMachine.getOrderId() + "\n");
+                System.out.println("Order Completed for "+currentBeverage.getName()+". OrderId: " + CoffeeMachine.getOrderId() + "\n");
             }
-            else {
-                System.out.println("******SOMETHING WENT WRONG*************");
-            }
+//            else {
+//                CoffeeMachine.incrementOrderId();
+//                System.out.println("OrderId: " + CoffeeMachine.getOrderId() + " could not be completed due to "
+//                                   + "insufficient Inventory\n");
+//
+//            }
             this.outlet.setOutletState(OutletState.READY_TO_TAKE_ORDER);
             CoffeeMachine.locks[this.outlet.getId() - 1].notifyAll();
 

@@ -5,9 +5,12 @@ import coffeeMachine.machine.CoffeeMachine;
 import coffeeMachine.machine.CoffeeMachineOutlet;
 import coffeeMachine.machine.CoffeeMaker;
 import coffeeMachine.machine.CoffeeMakerJob;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -17,16 +20,21 @@ import java.util.concurrent.TimeUnit;
  */
 public class FunctionalTest {
     CoffeeMachine coffeeMachine;
-    Integer outletId;
-    Integer drinkId;
 
+    @BeforeClass
+    public static void setup() {
+
+    }
 
     @Before
     public void setUp() throws Exception {
         this.coffeeMachine = CoffeeMachine.getInstance();
-        this.outletId = 1;
-        this.drinkId = 1;
 
+    }
+
+    @After
+    public void finalize() throws IOException {
+        this.coffeeMachine.reset();
     }
 
     private CoffeeMachineOutlet getOutletById(int outletId) {
@@ -47,9 +55,10 @@ public class FunctionalTest {
      * @throws InterruptedException
      */
     @Test
-    public void testOutput1() throws InterruptedException {
-        CountDownLatch makerLatch = new CountDownLatch(3);
-        CountDownLatch drinkerLatch = new CountDownLatch(3);
+    public void testOutput1() {
+        System.out.println("\n### Test Case 1 Started ###");
+        CountDownLatch makerLatch = new CountDownLatch(4);
+        CountDownLatch drinkerLatch = new CountDownLatch(4);
 
         //Placing first order
         CoffeeMakerJobTester coffeeMakerJobTester = new CoffeeMakerJobTester(getOutletById(1), getDrinkById(1),
@@ -76,8 +85,14 @@ public class FunctionalTest {
         new CoffeeMaker().makeCoffee(coffeeMakerJobTester);
         new CoffeeDrinker().drinkCoffee(coffeeDrinkerJobTester);
 
-        makerLatch.await(10, TimeUnit.SECONDS);
-        drinkerLatch.await(10, TimeUnit.SECONDS);
+        try {
+            makerLatch.await();
+            drinkerLatch.await();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("\n### Test Case 1 Completed ###");
     }
 
     /**
@@ -90,9 +105,10 @@ public class FunctionalTest {
      * @throws InterruptedException
      */
     @Test
-    public void testOutput2() throws InterruptedException {
-        CountDownLatch makerLatch = new CountDownLatch(3);
-        CountDownLatch drinkerLatch = new CountDownLatch(3);
+    public void testOutput2() {
+        System.out.println("\n### Test Case 2 Started ###");
+        CountDownLatch makerLatch = new CountDownLatch(4);
+        CountDownLatch drinkerLatch = new CountDownLatch(4);
 
         //Placing first order
         CoffeeMakerJobTester coffeeMakerJobTester = new CoffeeMakerJobTester(getOutletById(1), getDrinkById(1),
@@ -119,8 +135,14 @@ public class FunctionalTest {
         new CoffeeMaker().makeCoffee(coffeeMakerJobTester);
         new CoffeeDrinker().drinkCoffee(coffeeDrinkerJobTester);
 
-        makerLatch.await(10, TimeUnit.SECONDS);
-        drinkerLatch.await(10, TimeUnit.SECONDS);
+        try {
+            makerLatch.await();
+            drinkerLatch.await();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("\n### Test Case 2 Completed ###");
     }
 
     /**
@@ -133,9 +155,10 @@ public class FunctionalTest {
      * @throws InterruptedException
      */
     @Test
-    public void testOutput3() throws InterruptedException {
-        CountDownLatch makerLatch = new CountDownLatch(3);
-        CountDownLatch drinkerLatch = new CountDownLatch(3);
+    public void testOutput3() {
+        System.out.println("\n### Test Case 3 Started ###");
+        CountDownLatch makerLatch = new CountDownLatch(4);
+        CountDownLatch drinkerLatch = new CountDownLatch(4);
 
         //Placing first order
         CoffeeMakerJobTester coffeeMakerJobTester = new CoffeeMakerJobTester(getOutletById(1), getDrinkById(2),
@@ -163,8 +186,14 @@ public class FunctionalTest {
         new CoffeeMaker().makeCoffee(coffeeMakerJobTester);
         new CoffeeDrinker().drinkCoffee(coffeeDrinkerJobTester);
 
-        makerLatch.await(10, TimeUnit.SECONDS);
-        drinkerLatch.await(10, TimeUnit.SECONDS);
+        try {
+            makerLatch.await();
+            drinkerLatch.await();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("\n### Test Case 3 Completed ###");
     }
 
     private class CoffeeMakerJobTester extends CoffeeMakerJob {
@@ -179,8 +208,14 @@ public class FunctionalTest {
 
         @Override
         public void run() {
-            super.run();
-            latch.countDown();
+            try {
+                super.run();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                latch.countDown();
+            }
         }
     }
 
@@ -195,8 +230,14 @@ public class FunctionalTest {
 
         @Override
         public void run() {
-            super.run();
-            latch.countDown();
+            try {
+                super.run();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }finally {
+                latch.countDown();
+            }
         }
     }
 }

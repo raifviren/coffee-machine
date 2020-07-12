@@ -7,6 +7,6 @@ package coffeeMachine.machine;
 public enum OutletState {
     READY_TO_TAKE_ORDER,
     BREWING_DRINK,
-    DRINK_READY,
+    BREWING_COMPLETED,
     OUT_OF_SERVICE;
 }
